@@ -1,4 +1,4 @@
-package controller
+package k8s
 
 import (
 	"context"
@@ -75,7 +75,7 @@ func (c K8sClient) ListDeployments(namepace string) ([]model.Deployment, error) 
 
 var k8sClient *K8sClient
 
-func NewClient() (*K8sClient, error) {
+func GetClient() (*K8sClient, error) {
 	if k8sClient == nil {
 		logging.Info("init client")
 		config, err := clientcmd.BuildConfigFromFlags("", "/etc/kubevision/k8sconfig")

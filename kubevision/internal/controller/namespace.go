@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"kubevision/apiv1"
 	"kubevision/internal/model"
+	"kubevision/internal/service/k8s"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -16,7 +17,7 @@ type Namespaces struct{}
 func (c *Namespaces) Get(ctx context.Context, apiReq *apiv1.NamespacesListReq) (res *apiv1.NamespacesListRes, err error) {
 	req := g.RequestFromCtx(ctx)
 
-	client, err := NewClient()
+	client, err := k8s.GetClient()
 	if err != nil {
 		fmt.Println(err)
 		req.Response.WriteStatusExit(400)
