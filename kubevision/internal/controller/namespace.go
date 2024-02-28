@@ -1,16 +1,21 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"kubevision/apiv1"
 	"kubevision/internal/model"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 type Namespaces struct{}
 
-func (c *Namespaces) Get(req *ghttp.Request) {
+func (c *Namespaces) Get(ctx context.Context, apiReq *apiv1.NamespacesListReq) (res *apiv1.NamespacesListRes, err error) {
+	req := g.RequestFromCtx(ctx)
+
 	client, err := NewClient()
 	if err != nil {
 		fmt.Println(err)
@@ -24,6 +29,12 @@ func (c *Namespaces) Get(req *ghttp.Request) {
 	}
 	data, _ := json.Marshal(map[string][]model.Namespace{"namespaces": namespaces})
 	req.Response.WriteJson(data)
+	return
+}
+func (h *Namespaces) Post(ctx context.Context, req *apiv1.NamespacesPostReq) (res *apiv1.NamespacesPostRes, err error) {
+	request := g.RequestFromCtx(ctx)
+	request.Response.Writeln("Hello World!")
+	return
 }
 
 func getReqNamespace(req *ghttp.Request) string {

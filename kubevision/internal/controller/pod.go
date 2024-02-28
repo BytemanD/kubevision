@@ -1,16 +1,20 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"kubevision/apiv1"
 	"kubevision/internal/model"
 
-	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type Pods struct{}
 
-func (c *Pods) Get(req *ghttp.Request) {
+func (c *Pods) Get(ctx context.Context, apiReq *apiv1.PodsListReq) (res *apiv1.PodsListRes, err error) {
+	req := g.RequestFromCtx(ctx)
+
 	namespace := getReqNamespace(req)
 	client, err := NewClient()
 	if err != nil {
@@ -25,4 +29,5 @@ func (c *Pods) Get(req *ghttp.Request) {
 	}
 	data, _ := json.Marshal(map[string][]model.Pod{"pods": pods})
 	req.Response.WriteJson(data)
+	return
 }

@@ -20,20 +20,22 @@ var (
 			s := g.Server()
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(ghttp.MiddlewareHandlerResponse)
+			})
+			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Bind(
-					controller.Hello,
+					new(controller.Nodes),
+					new(controller.Namespaces),
+					new(controller.Daemonsets),
+					new(controller.Deployments),
+					new(controller.Pods),
 				)
+
 			})
 			// s.SetAddr(":8080")
 			// s.BindObjectMethod("/namespaces", new(controller.Namespace), "Index")
 
 			logging.BasicConfig(logging.LogConfig{Level: logging.DEBUG})
 			logging.Info("start")
-			s.BindObjectRest("/nodes", new(controller.Nodes))
-			s.BindObjectRest("/pods", new(controller.Pods))
-			s.BindObjectRest("/namespaces", new(controller.Namespaces))
-			s.BindObjectRest("/daemonsets", new(controller.Daemonsets))
-			s.BindObjectRest("/deployments", new(controller.Deployments))
 			s.Run()
 			return nil
 		},

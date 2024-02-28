@@ -1,28 +1,38 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
+	"kubevision/apiv1"
 	"kubevision/internal/model"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 type Daemonsets struct{}
 
-func (c *Daemonsets) Get(req *ghttp.Request) {
+func (c *Daemonsets) Get(ctx context.Context, apiReq *apiv1.DaemonsetsListReq) (res *apiv1.DaemonsetsListRes, err error) {
+	req := g.RequestFromCtx(ctx)
+
 	namespace := getReqNamespace(req)
 	client, err := NewClient()
 	if err != nil {
-		fmt.Println(err)
-		req.Response.WriteStatusExit(400)
+		req.Response.WriteStatusExit(400, err)
 	}
 
 	daemonsets, err := client.ListDaemonsets(namespace)
 	if err != nil {
-		fmt.Println(err)
-		req.Response.WriteStatusExit(400)
+		req.Response.WriteStatusExit(400, err)
 	}
 	data, _ := json.Marshal(map[string][]model.Daemonset{"daemonsets": daemonsets})
 	req.Response.WriteJson(data)
+	return
+}
+
+func (c *Daemonsets) Post(req *ghttp.Request) {
+
+}
+func (c *Daemonsets) Delete(req *ghttp.Request) {
+
 }

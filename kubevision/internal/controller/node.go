@@ -1,27 +1,28 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
+	"kubevision/apiv1"
 	"kubevision/internal/model"
 
-	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type Nodes struct{}
 
-func (c *Nodes) Get(req *ghttp.Request) {
+func (h *Nodes) List(ctx context.Context, apiReq *apiv1.NodesListReq) (res *apiv1.NodesListRes, err error) {
+	req := g.RequestFromCtx(ctx)
 	client, err := NewClient()
 	if err != nil {
-		fmt.Println(err)
-		req.Response.WriteStatusExit(400)
+		req.Response.WriteStatusExit(400, err)
 	}
 
 	nodes, err := client.ListNodes()
 	if err != nil {
-		fmt.Println(err)
-		req.Response.WriteStatusExit(400)
+		req.Response.WriteStatusExit(400, err)
 	}
 	data, _ := json.Marshal(map[string][]model.Node{"nodes": nodes})
 	req.Response.WriteJson(data)
+	return
 }
