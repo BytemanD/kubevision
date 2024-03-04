@@ -38,7 +38,6 @@ func (c K8sClient) Version() (string, error) {
 }
 
 func (c K8sClient) ListNamespaces() ([]model.Namespace, error) {
-	logging.Info("list namespaces")
 	namespaces := []model.Namespace{}
 	nsList, err := c.client.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
 	if err != nil {

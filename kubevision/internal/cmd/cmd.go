@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"kubevision/internal/controller"
 
@@ -12,18 +13,24 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 )
 
-func MiddlewareCORS(r *ghttp.Request) {
-	r.Response.CORSDefault()
-	// r.Response.Header().Set("Access-Control-Expose-Headers", "X-Token")
-	// r.Response.Header().Set("Access-Control-Allow-Headers", "*")
-	r.Middleware.Next()
+func MiddlewareCORS(req *ghttp.Request) {
+	req.Response.CORSDefault()
+	req.Response.Header().Set("Access-Control-Expose-Headers", "X-Auth-Token")
+	req.Middleware.Next()
 }
-func MiddlewareLogResponse(r *ghttp.Request) {
+func MiddlewareResponseStatus(r *ghttp.Request) {
+	startTime := time.Now()
 	r.Middleware.Next()
-	logging.Info("%s %s -> %d", r.Method, r.URL, r.Response.Status)
+	spentTime := time.Since(startTime).Seconds()
+	if r.Response.Status < 400 {
+		logging.Info("%s %s -> %d (%f)s", r.Method, r.URL, r.Response.Status, spentTime)
+	} else {
+		logging.Error("%s %s -> %d (%f)s\n%s", r.Method, r.URL, r.Response.Status, spentTime,
+			r.Response.BufferString())
+	}
 }
 func MiddlewareAuth(req *ghttp.Request) {
-	token := req.Header.Get("X-Token")
+	token := req.Header.Get("X-Auth-Token")
 	if token == "" {
 		logging.Error("no auth")
 		req.Response.WriteStatusExit(403, "not auth")
@@ -43,6 +50,7 @@ var (
 			s.Group("/", func(group *ghttp.RouterGroup) {
 				group.Middleware(MiddlewareCORS)
 				group.Middleware(ghttp.MiddlewareHandlerResponse)
+				group.Middleware(MiddlewareResponseStatus)
 				group.Bind(
 					new(controller.Login),
 				)
@@ -51,7 +59,7 @@ var (
 				group.Middleware(MiddlewareCORS)
 				group.Middleware(ghttp.MiddlewareHandlerResponse)
 				group.Middleware(MiddlewareAuth)
-				group.Middleware(MiddlewareLogResponse)
+				group.Middleware(MiddlewareResponseStatus)
 				group.Bind(
 					new(controller.Cluster),
 					new(controller.Version),
