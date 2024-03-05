@@ -6,6 +6,7 @@ import (
 
 	"github.com/BytemanD/easygo/pkg/global/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
@@ -20,7 +21,7 @@ type K8sClient struct {
 }
 
 func (c K8sClient) GetClusterInfo() (*model.Cluster, error) {
-	serverVersion, err := c.client.ServerVersion()
+	serverVersion, err := c.GetServerVersion()
 	if err != nil {
 		return nil, err
 	}
@@ -33,50 +34,49 @@ func (c K8sClient) GetClusterInfo() (*model.Cluster, error) {
 	}, nil
 }
 
-func (c K8sClient) Version() (string, error) {
-	return c.client.CoreV1().RESTClient().APIVersion().Version, nil
+func (c K8sClient) GetServerVersion() (*version.Info, error) {
+	return c.client.ServerVersion()
 }
 
 func (c K8sClient) ListNamespaces() ([]model.Namespace, error) {
-	namespaces := []model.Namespace{}
 	nsList, err := c.client.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+	namespaces := []model.Namespace{}
 	for _, item := range nsList.Items {
 		namespaces = append(namespaces, model.ParseV1Namespce(item))
 	}
 	return namespaces, nil
 }
 func (c K8sClient) ListNodes() ([]model.Node, error) {
-	nodes := []model.Node{}
 	items, err := c.client.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+	nodes := []model.Node{}
 	for _, item := range items.Items {
 		nodes = append(nodes, model.ParseV1Node(item))
 	}
 	return nodes, nil
 }
 func (c K8sClient) ListPods(namespace string) ([]model.Pod, error) {
-	logging.Info("list pods with namespace: %s", namespace)
-	pods := []model.Pod{}
 	posList, err := c.client.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+	pods := []model.Pod{}
 	for _, item := range posList.Items {
 		pods = append(pods, model.ParseV1Pod(item))
 	}
 	return pods, nil
 }
 func (c K8sClient) ListDaemonsets(namespace string) ([]model.Daemonset, error) {
-	daemonsets := []model.Daemonset{}
 	items, err := c.client.AppsV1().DaemonSets(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+	daemonsets := []model.Daemonset{}
 	for _, item := range items.Items {
 		daemonsets = append(daemonsets, model.ParseV1Daemonset(item))
 	}
@@ -84,11 +84,11 @@ func (c K8sClient) ListDaemonsets(namespace string) ([]model.Daemonset, error) {
 }
 
 func (c K8sClient) ListDeployments(namepace string) ([]model.Deployment, error) {
-	nodes := []model.Deployment{}
 	items, err := c.client.AppsV1().Deployments(namepace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+	nodes := []model.Deployment{}
 	for _, item := range items.Items {
 		nodes = append(nodes, model.ParseV1Deployment(item))
 	}

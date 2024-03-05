@@ -16,7 +16,7 @@ type Pod struct {
 	NodeSelector map[string]string `json:"node_selector,omitempty"`
 	HostIp       string            `json:"host_ip,omitempty"`
 	PodIp        string            `json:"pod_id,omitempty"`
-	Containers   []Container       `json:"container,omitempty"`
+	Containers   []Container       `json:"containers,omitempty"`
 	Deletion     Deletion          `json:"deletion,omitempty"`
 	Phase        string            `json:"phase,omitempty"`
 }

@@ -7,7 +7,7 @@ import (
 type BaseModel struct {
 	Name     string `json:"name,omitempty"`
 	Creation string `json:"creation,omitempty"`
-	Status   string `json:"Status,omitempty"`
+	Status   string `json:"status,omitempty"`
 }
 
 type ContainerStatus struct {
