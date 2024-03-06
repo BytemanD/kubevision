@@ -17,8 +17,9 @@
                     </v-row>
                 </template>
 
-                <template v-slot:[`item.data_nums`]="{ item }">
-                    {{ Object.keys(item.data).length }}
+                <template v-slot:[`item.labels`]="{ item }">
+                    <v-chip size="small" label v-bind:key="key" v-for="value, key in item.labels" class="mr-2">{{
+                key }}={{ value }}</v-chip>
                 </template>
             </v-data-table>
         </v-col>
@@ -28,9 +29,9 @@
 <script setup>
 import { ref } from 'vue';
 
-import { ConfigMapTable } from '@/assets/app/tables';
+import { StatefulsetsTable } from '@/assets/app/tables';
 
-var table = ref(new ConfigMapTable())
+var table = ref(new StatefulsetsTable())
 
 table.value.refresh()
 

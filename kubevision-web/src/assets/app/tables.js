@@ -93,7 +93,7 @@ class DataTable {
         }
     }
     async refresh(filters = {}) {
-        this.loading = true;
+        this.refreshing = true;
         let result = null
         try {
             if (this.api.detail) {
@@ -106,7 +106,7 @@ class DataTable {
             Notify.error(`${this.name || '资源'} 查询失败`)
             return;
         } finally {
-            this.loading = false;
+            this.refreshing = false;
         }
         this.items = this.bodyKey ? result[this.bodyKey] : result;
         return result;
@@ -161,28 +161,28 @@ export class NodeTable extends DataTable {
 export class DaemonsetTable extends DataTable {
     constructor() {
         super([{ title: '名字', key: 'name' },
-               { title: 'Ready', key: 'ready' },
-               { title: 'available', key: 'number_available' },
-               { title: 'current', key: 'current_number_scheduled' },
-            //    { title: 'Ready', key: 'number_ready' },
-            //    { title: 'desired', key: 'desired_number_scheduled' },
-               { title: 'node_selector', key: 'node_selector' },
-               { title: 'selector', key: 'selector' },
-               { title: 'containers', key: 'containers' },
-               { title: '创建时间', key: 'creation' },
-               { title: '操作', key: 'actions' },
-            ], API.daemonsets, 'daemonsets', '服务守护进程');
-            this.extendItems = [];
+        { title: 'Ready', key: 'ready' },
+        { title: 'available', key: 'number_available' },
+        { title: 'current', key: 'current_number_scheduled' },
+        //    { title: 'Ready', key: 'number_ready' },
+        //    { title: 'desired', key: 'desired_number_scheduled' },
+        { title: 'node_selector', key: 'node_selector' },
+        { title: 'selector', key: 'selector' },
+        { title: 'containers', key: 'containers' },
+        { title: '创建时间', key: 'creation' },
+        { title: '操作', key: 'actions' },
+        ], API.daemonsets, 'daemonsets', '服务守护进程');
+        this.extendItems = [];
     }
 }
 export class DeploymentTable extends DataTable {
     constructor() {
         super([{ title: '名字', key: 'name' },
-               { title: 'Ready', key: 'ready' },
-               { title: 'available', key: 'available_replicas' },
-               { title: 'containers', key: 'containers' },
-               { title: '创建时间', key: 'creation' },
-               { title: '操作', key: 'actions' },
+        { title: 'Ready', key: 'ready' },
+        { title: 'available', key: 'available_replicas' },
+        { title: 'containers', key: 'containers' },
+        { title: '创建时间', key: 'creation' },
+        { title: '操作', key: 'actions' },
         ], API.deployments, 'deployments', '服务守护进程');
         this.extendItems = [
             // { title: 'images', key: 'images' },
@@ -209,76 +209,91 @@ export class PodTable extends DataTable {
         ];
         this.waiting = {};
     }
-    updateWaiting(pod){
+    updateWaiting(pod) {
         this.waiting[pod.name] = Utils.getPodWaiting(pod);
     }
 }
 
 export class ConfigMapTable extends DataTable {
     constructor() {
-        super([{ title: '名字', key: 'name' },
-               { title: '数据个数', key: 'data_nums' },
-               { title: '创建时间', key: 'creation' },
-               { title: '操作', key: 'actions' },
-            ], API.configmaps, 'configmaps', '配置字典');
-            this.extendItems = [
-                   { title: '数据', key: 'data_list' },
-            ]
+        super([
+            { title: '名字', key: 'name' },
+            { title: '数据个数', key: 'data_nums' },
+            { title: '创建时间', key: 'creation' },
+            { title: '操作', key: 'actions' },
+        ], API.configmaps, 'configmaps', '配置字典');
+        this.extendItems = [
+            { title: '数据', key: 'data_list' },
+        ]
     }
 }
 export class SecretTable extends DataTable {
     constructor() {
-        super([{ title: '名字', key: 'name' },
-               { title: '数据个数', key: 'data_nums' },
-               { title: '创建时间', key: 'creation' },
-               { title: '操作', key: 'actions' },
-            ], API.secrets, 'secrets', '加密数据');
-            this.extendItems = [
-                   { title: '数据', key: 'data_list' },
-            ]
+        super([
+            { title: '名字', key: 'name' },
+            { title: '数据个数', key: 'data_nums' },
+            { title: '创建时间', key: 'creation' },
+            { title: '操作', key: 'actions' },
+        ], API.secrets, 'secrets', '加密数据');
+        this.extendItems = [
+            { title: '数据', key: 'data_list' },
+        ]
     }
 }
 export class ServiceTable extends DataTable {
     constructor() {
-        super([{ title: '名字', key: 'name' },
-               { title: '类型', key: 'type' },
-               { title: 'IP', key: 'cluster_ip' },
+        super([
+            { title: '名字', key: 'name' },
+            { title: '类型', key: 'type' },
+            { title: 'IP', key: 'cluster_ip' },
             //    { title: 'IP列表', key: 'cluster_i_ps' },
-               { title: 'IP栈', key: 'ip_families' },
-               { title: '端口', key: 'ports' },
-               { title: '创建时间', key: 'creation' },
-               { title: '操作', key: 'actions' },
-            ], API.services, 'services', '服务');
-            this.extendItems = [
-                   { title: '数据', key: 'data_list' },
-            ]
+            { title: 'IP栈', key: 'ip_families' },
+            { title: '端口', key: 'ports' },
+            { title: '创建时间', key: 'creation' },
+            { title: '操作', key: 'actions' },
+        ], API.services, 'services', '服务');
+        this.extendItems = [
+            { title: '数据', key: 'data_list' },
+        ]
     }
 }
 export class CronjobTable extends DataTable {
     constructor() {
-        super([{ title: '名字', key: 'name' },
-               { title: 'node_selector', key: 'node_selector' },
-               { title: 'selector', key: 'selector' },
-               { title: 'containers', key: 'containers' },
-               { title: '创建时间', key: 'creation' },
-               { title: '创建时间', key: 'creation' },
-            ], API.cronjobs, 'cronjobs', '定时任务');
-            this.extendItems = [
-                   { title: '数据', key: 'data_list' },
-            ]
+        super([
+            { title: '名字', key: 'name' },
+            { title: 'node_selector', key: 'node_selector' },
+            { title: 'selector', key: 'selector' },
+            { title: 'containers', key: 'containers' },
+            { title: '创建时间', key: 'creation' },
+        ], API.cronjobs, 'cronjobs', '定时任务');
+        this.extendItems = [
+            { title: '数据', key: 'data_list' },
+        ]
     }
 }
 export class JobTable extends DataTable {
     constructor() {
-        super([{ title: '名字', key: 'name' },
-               { title: 'node_selector', key: 'node_selector' },
-               { title: 'selector', key: 'selector' },
-               { title: 'containers', key: 'containers' },
-               { title: '创建时间', key: 'creation' },
-            ], API.jobs, 'jobs', '任务');
-            this.extendItems = [
-                   { title: '数据', key: 'data_list' },
-            ]
+        super([
+            { title: '名字', key: 'name' },
+            { title: 'node_selector', key: 'node_selector' },
+            { title: 'selector', key: 'selector' },
+            { title: 'containers', key: 'containers' },
+            { title: '创建时间', key: 'creation' },
+        ], API.jobs, 'jobs', '任务');
+        this.extendItems = [
+            { title: '数据', key: 'data_list' },
+        ]
+    }
+}
+export class StatefulsetsTable extends DataTable {
+    constructor() {
+        super([
+            { title: '名字', key: 'name' },
+            { title: 'node_selector', key: 'node_selector' },
+            { title: 'selector', key: 'selector' },
+            { title: 'containers', key: 'containers' },
+            { title: '创建时间', key: 'creation' },
+        ], API.events, 'events', '事件');
     }
 }
 export class EventTable extends DataTable {
@@ -293,7 +308,7 @@ export class EventTable extends DataTable {
             { title: '原因', key: 'reason' },
             { title: '消息', key: 'message' },
             // { title: '来源', key: 'source' },
-         ], API.events, 'events', '事件');
+        ], API.events, 'events', '事件');
     }
 }
 

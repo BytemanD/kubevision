@@ -11,6 +11,9 @@
                             <v-text-field density="compact" hide-details v-model="table.search"
                                 append-icon="mdi-magnify" placeholder="搜索"></v-text-field>
                         </v-col>
+                        <v-col cols="2">
+                            <v-btn variant="text" icon="mdi-refresh" color="info" v-on:click="table.refresh()"></v-btn>
+                        </v-col>
                     </v-row>
                 </template>
                 <template v-slot:[`item.containers`]="{ item }">

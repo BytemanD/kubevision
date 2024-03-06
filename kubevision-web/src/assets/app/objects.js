@@ -7,7 +7,7 @@ import {
     ImageDataTable,
     ClusterTable,
     AggDataTable, MigrationDataTable, EndpointTable,
-} from './tables.jsx';
+} from './tables.js';
 // import { 
 //     NewClusterDialog, ProjectUserDialog, NewUserDialog, RolesDialog, NewRoleDialog,
     

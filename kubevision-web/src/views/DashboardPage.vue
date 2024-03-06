@@ -23,7 +23,7 @@
       <v-app-bar-nav-icon @click="navigation.mini = !navigation.mini"></v-app-bar-nav-icon>
       <v-toolbar-title class="ml-1">
         <v-select solo-inverted flat hide-details v-model="namespace" item-title="name" item-value="name"
-          :items="namespaces">
+          :items="namespaces" @update:modelValue="changeNamespace()">
 
           <template v-slot:prepend>命名空间:</template>
           <!-- @update:modelValue="changeRegion()" -->
@@ -97,7 +97,7 @@ export default {
     ui: {
       navigationWidth: SETTINGS.ui.getItem('navigatorWidth'),
     },
-    namespace: 'default',
+    namespace: sessionStorage.getItem('namespace') || 'default',
     navigation: {
       group: navigationGroup,
       selectedItem: navigationGroup[0].items[0].title,
@@ -105,21 +105,11 @@ export default {
       drawer: true,
       itemIndex: 0,
     },
-    context: {
-      namespace: localStorage.getItem('namespace'),
-    },
     namespaces: [],
   }),
   methods: {
     async refresh() {
       this.namespaces = (await API.namespaces.list()).namespaces;
-    },
-    initNamespace() {
-      this.context.namespace = sessionStorage.getItem('namespace');
-      if (!this.context.namespace) {
-        this.context.namespace = SETTINGS.k8s.getItem('defaultNamespace').value;
-        sessionStorage.setItem('namespace', this.context.namespace)
-      }
     },
     selectItem(item, route) {
       this.navigation.selectedItem = item.title;
@@ -176,8 +166,8 @@ export default {
         }
       }
     },
-    changeRegion() {
-      sessionStorage.setItem('region', this.context.region);
+    changeNamespace() {
+      sessionStorage.setItem('namespace', this.namespace);
       location.reload();
     }
   },

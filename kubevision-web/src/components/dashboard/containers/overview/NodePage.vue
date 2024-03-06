@@ -1,9 +1,5 @@
 <template>
     <v-row>
-        <v-col></v-col>
-        <v-col cols="2">
-            <!-- <TableRefreshBtn :table="table" /> -->
-        </v-col>
         <v-col cols="12">
             <v-data-table density="compact" :headers="table.headers" :loading="table.refreshing" :items="table.items"
                 item-value="name" :items-per-page="table.itemsPerPage" :search="table.search" show-select
@@ -14,6 +10,9 @@
                         <v-col>
                             <v-text-field density="compact" hide-details v-model="table.search"
                                 append-icon="mdi-magnify" placeholder="搜索"></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-btn variant="text" icon="mdi-refresh" color="info" v-on:click="table.refresh()"></v-btn>
                         </v-col>
                     </v-row>
                 </template>

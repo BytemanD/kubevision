@@ -201,7 +201,9 @@ class Secrets extends Restfulclient {
 class Events extends Restfulclient {
     constructor() { super('/events') }
 }
-
+class Statefulsets extends Restfulclient {
+    constructor() { super('/statefulsets') }
+}
 
 class AuthInfo extends Restfulclient {
     constructor() { super('/auth_info') }
@@ -226,9 +228,6 @@ class Version extends Restfulclient {
     }
 }
 
-class ComputeLimits extends Restfulclient {
-    constructor() { super('/computing/limits') }
-}
 
 export class KubevisionAPI {
     constructor() {
@@ -246,6 +245,7 @@ export class KubevisionAPI {
         this.configmaps = new Configmaps()
         this.events = new Events()
         this.secrets = new Secrets()
+        this.statefulsets = new Statefulsets()
 
         // this.task = new Task();
 
