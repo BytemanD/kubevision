@@ -18,8 +18,8 @@
                 </template>
 
                 <template v-slot:[`item.ready`]="{ item }">
-                    <v-icon color="success" v-if="item.ready == 'True'">mdi-check-circle</v-icon>
-                    <v-icon color="error" v-else>mdi-close-circle</v-icon>
+                    <v-icon color="green" v-if="item.ready == 'True'">mdi-check-circle</v-icon>
+                    <v-icon color="red" v-else>mdi-close-circle</v-icon>
                 </template>
 
                 <template v-slot:[`item.labels`]="{ item }">

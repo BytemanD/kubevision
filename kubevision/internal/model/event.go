@@ -8,7 +8,7 @@ type Event struct {
 	BaseModel
 	Type           string                 `json:"type,omitempty"`
 	EventTime      string                 `json:"event_time,omitempty"`
-	InvolvedObject corev1.ObjectReference `json:"involve_object,omitempty"`
+	InvolvedObject corev1.ObjectReference `json:"involved_object,omitempty"`
 	Message        string                 `json:"message,omitempty"`
 	Reason         string                 `json:"reason,omitempty"`
 	Source         corev1.EventSource     `json:"source,omitempty"`

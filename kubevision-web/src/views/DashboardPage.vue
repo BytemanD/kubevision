@@ -30,6 +30,7 @@
         </v-select>
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <dialog-events />
       <btn-theme />
       <SettingSheet />
       <btn-logout />
@@ -51,9 +52,11 @@ import SETTINGS from '@/assets/app/settings';
 import BtnTheme from '../components/plugins/BtnTheme.vue';
 import BtnHome from '../components/plugins/BtnHome.vue';
 import BtnLogout from '../components/plugins/BtnLogout.vue';
+import DialogEvents from '@/components/plugins/DialogEvents.vue';
 import i18n from '@/assets/app/i18n';
 import SettingSheet from '@/components/dashboard/SettingSheet.vue';
 import { Utils } from '@/assets/app/lib';
+
 import notify from '@/assets/app/notify';
 import API from '@/assets/app/api';
 
@@ -85,6 +88,7 @@ const navigationGroup = [
 
 export default {
   components: {
+    DialogEvents,
     BtnTheme, BtnHome,
     SettingSheet,
     BtnLogout,
