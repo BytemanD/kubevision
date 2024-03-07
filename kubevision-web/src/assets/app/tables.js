@@ -161,14 +161,14 @@ export class NodeTable extends DataTable {
 export class DaemonsetTable extends DataTable {
     constructor() {
         super([{ title: '名字', key: 'name' },
-        { title: 'Ready', key: 'ready' },
-        { title: 'available', key: 'number_available' },
-        { title: 'current', key: 'current_number_scheduled' },
-        //    { title: 'Ready', key: 'number_ready' },
-        //    { title: 'desired', key: 'desired_number_scheduled' },
+        { title: '可用', key: 'number_available' },
+        { title: '当前', key: 'current_number_scheduled' },
+        { title: '准备', key: 'number_ready' },
+        { title: '期望', key: 'desired_number_scheduled' },
+        { title: '更新', key: 'updated_number_scheduled' },
         { title: 'node_selector', key: 'node_selector' },
-        { title: 'selector', key: 'selector' },
-        { title: 'containers', key: 'containers' },
+        // { title: 'selector', key: 'selector' },
+        // { title: 'containers', key: 'containers' },
         { title: '创建时间', key: 'creation' },
         { title: '操作', key: 'actions' },
         ], API.daemonsets, 'daemonsets', '服务守护进程');
@@ -178,9 +178,11 @@ export class DaemonsetTable extends DataTable {
 export class DeploymentTable extends DataTable {
     constructor() {
         super([{ title: '名字', key: 'name' },
-        { title: 'Ready', key: 'ready' },
-        { title: 'available', key: 'available_replicas' },
-        { title: 'containers', key: 'containers' },
+        { title: '准备', key: 'ready_replicas' },
+        // { title: '副本', key: 'replicas' },
+        { title: '更新', key: 'updated_replicas' },
+        { title: '可用', key: 'available_replicas' },
+        // { title: 'containers', key: 'containers' },
         { title: '创建时间', key: 'creation' },
         { title: '操作', key: 'actions' },
         ], API.deployments, 'deployments', '服务守护进程');
@@ -198,7 +200,7 @@ export class PodTable extends DataTable {
             { title: '阶段', key: 'phase' },
             { title: '所在节点', key: 'node_name' },
             { title: 'IP地址', key: 'pod_id' },
-            { title: 'containers', key: 'containers' },
+            // { title: 'containers', key: 'containers' },
             { title: '创建时间', key: 'creation' },
             { title: '操作', key: 'actions' },
         ], API.pods, 'pods', '容器组');
@@ -261,9 +263,9 @@ export class CronjobTable extends DataTable {
     constructor() {
         super([
             { title: '名字', key: 'name' },
+            { title: '计划', key: 'schedule' },
             { title: 'node_selector', key: 'node_selector' },
-            { title: 'selector', key: 'selector' },
-            { title: 'containers', key: 'containers' },
+            // { title: 'containers', key: 'containers' },
             { title: '创建时间', key: 'creation' },
         ], API.cronjobs, 'cronjobs', '定时任务');
         this.extendItems = [
@@ -276,7 +278,6 @@ export class JobTable extends DataTable {
         super([
             { title: '名字', key: 'name' },
             { title: 'node_selector', key: 'node_selector' },
-            { title: 'selector', key: 'selector' },
             { title: 'containers', key: 'containers' },
             { title: '创建时间', key: 'creation' },
         ], API.jobs, 'jobs', '任务');

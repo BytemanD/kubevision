@@ -10,6 +10,7 @@ type Deployment struct {
 	Replicas          int32             `json:"replicas,omitempty"`
 	ReadyReplicas     int32             `json:"ready_replicas,omitempty"`
 	AvailableReplicas int32             `json:"available_replicas,omitempty"`
+	UpdatedReplicas   int32             `json:"updated_replicas,omitempty"`
 	Containers        []Container       `json:"containers,omitempty"`
 	InitContainers    []Container       `json:"init_containers,omitempty"`
 }
@@ -32,6 +33,7 @@ func ParseV1Deployment(item appv1.Deployment) Deployment {
 		Labels:            item.Labels,
 		Replicas:          item.Status.ReadyReplicas,
 		ReadyReplicas:     item.Status.ReadyReplicas,
+		UpdatedReplicas:   item.Status.UpdatedReplicas,
 		AvailableReplicas: item.Status.AvailableReplicas,
 
 		Containers:     containers,

@@ -16,10 +16,9 @@
                         </v-col>
                     </v-row>
                 </template>
-
-                <template v-slot:[`item.labels`]="{ item }">
-                    <v-chip size="small" label v-bind:key="key" v-for="value, key in item.labels" class="mr-2">{{
-                key }}={{ value }}</v-chip>
+                <template v-slot:[`item.node_selector`]="{ item }">
+                    <v-chip size="x-small" class="mr-1 mb-1" v-for="(v, k) in item.node_selector || {}" v-bind:key="k">
+                        {{ k }}={{ v }}</v-chip>
                 </template>
             </v-data-table>
         </v-col>

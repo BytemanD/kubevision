@@ -7,11 +7,13 @@ import (
 type Daemonset struct {
 	BaseModel
 	Labels                 map[string]string `json:"labels,omitempty"`
-	NumberReady            int32             `json:"number_ready,omitempty"`
-	CurrentNumberScheduled int32             `json:"current_number_scheduled,omitempty"`
-	DesiredNumberScheduled int32             `json:"desired_number_scheduled,omitempty"`
-	NodeSelector           map[string]string `json:"node_selector,omitempty"`
-	MatchLabels            map[string]string `json:"selector,omitempty"`
+	NumberReady            int32             `json:"number_ready"`
+	NumberAvailable        int32             `json:"number_available"`
+	UpdatedNumberScheduled int32             `json:"updated_number_scheduled"`
+	CurrentNumberScheduled int32             `json:"current_number_scheduled"`
+	DesiredNumberScheduled int32             `json:"desired_number_scheduled"`
+	NodeSelector           map[string]string `json:"node_selector"`
+	MatchLabels            map[string]string `json:"match_labels,omitempty"`
 	Containers             []Container       `json:"containers,omitempty"`
 	InitContainers         []Container       `json:"init_containers,omitempty"`
 }
@@ -33,6 +35,8 @@ func ParseV1Daemonset(item appv1.DaemonSet) Daemonset {
 		},
 		Labels:                 item.Labels,
 		NumberReady:            item.Status.NumberReady,
+		NumberAvailable:        item.Status.NumberAvailable,
+		UpdatedNumberScheduled: item.Status.UpdatedNumberScheduled,
 		CurrentNumberScheduled: item.Status.CurrentNumberScheduled,
 		DesiredNumberScheduled: item.Status.DesiredNumberScheduled,
 

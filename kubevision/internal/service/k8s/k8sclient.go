@@ -82,7 +82,14 @@ func (c K8sClient) ListDaemonsets(namespace string) ([]model.Daemonset, error) {
 	}
 	return daemonsets, nil
 }
-
+func (c K8sClient) GetDaemonsets(namespace string, name string) (*model.Daemonset, error) {
+	item, err := c.client.AppsV1().DaemonSets(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	ds := model.ParseV1Daemonset(*item)
+	return &ds, nil
+}
 func (c K8sClient) ListDeployments(namepace string) ([]model.Deployment, error) {
 	items, err := c.client.AppsV1().Deployments(namepace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
@@ -127,14 +134,35 @@ func (c K8sClient) ListJobs(namepace string) ([]model.Job, error) {
 	}
 	return jobs, nil
 }
-func (c K8sClient) ListCronJobs(namepace string) ([]model.CronJob, error) {
-	items, err := c.client.BatchV1().CronJobs(namepace).List(context.Background(), metav1.ListOptions{})
+func (c K8sClient) ListBatchBetaV1CronJobs(namepace string) ([]model.CronJob, error) {
+	cronJobs := []model.CronJob{}
+	items1, err := c.client.BatchV1beta1().CronJobs(namepace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
+	for _, item := range items1.Items {
+		cronJobs = append(cronJobs, model.ParseV1betaCronJob(item))
+	}
+	return cronJobs, nil
+}
+func (c K8sClient) ListBatchV1CronJobs(namepace string) ([]model.CronJob, error) {
 	cronJobs := []model.CronJob{}
-	for _, item := range items.Items {
-		cronJobs = append(cronJobs, model.ParseV1CronJob(item))
+	items1, err := c.client.BatchV1beta1().CronJobs(namepace).List(context.Background(), metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+	for _, item := range items1.Items {
+		cronJobs = append(cronJobs, model.ParseV1betaCronJob(item))
+	}
+	return cronJobs, nil
+}
+func (c K8sClient) ListCronJobs(namepace string) ([]model.CronJob, error) {
+	cronJobs, err := c.ListBatchBetaV1CronJobs(namepace)
+	if err != nil {
+		cronJobs, err = c.ListBatchV1CronJobs(namepace)
+	}
+	if err != nil {
+		return nil, err
 	}
 	return cronJobs, nil
 }

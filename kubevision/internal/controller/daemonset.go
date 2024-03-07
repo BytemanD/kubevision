@@ -6,6 +6,7 @@ import (
 	"kubevision/apiv1"
 	"kubevision/internal/model"
 	"kubevision/internal/service/k8s"
+	"kubevision/utility"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -16,7 +17,7 @@ type Daemonsets struct{}
 func (c *Daemonsets) Get(ctx context.Context, apiReq *apiv1.DaemonsetsListReq) (res *apiv1.DaemonsetsListRes, err error) {
 	req := g.RequestFromCtx(ctx)
 
-	namespace := getReqNamespace(req)
+	namespace := utility.GetReqNamespace(req)
 	client, err := k8s.GetClient()
 	if err != nil {
 		req.Response.WriteStatusExit(400, err)

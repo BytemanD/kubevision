@@ -16,13 +16,22 @@
                         </v-col>
                     </v-row>
                 </template>
+                <template v-slot:[`item.number_available`]="{ item }">
+                    <v-chip size="small" :class="item.number_available < item.desired_number_scheduled? 'text-red' : 'text-green'">
+                        {{ item.number_available }}/{{ item.desired_number_scheduled }}
+                    </v-chip>
+                </template>
+                <template v-slot:[`item.node_selector`]="{ item }">
+                    <v-chip size="x-small" class="mr-1 mb-1" v-for="(v, k) in item.node_selector || {}" v-bind:key="k">
+                        {{ k }}={{ v }}</v-chip>
+                </template>
                 <template v-slot:[`item.containers`]="{ item }">
                     <v-chip size="x-small" class="mr-1 mb-1" v-for="c in item.containers" v-bind:key="c.name">
                         {{ c.name }}</v-chip>
                 </template>
                 <template v-slot:[`item.labels`]="{ item }">
-                    <v-chip size="small" label v-bind:key="key" v-for="value, key in item.labels" class="mr-2">{{
-                key }}={{ value }}</v-chip>
+                    <v-chip size="small" label v-bind:key="key" v-for="value, key in item.labels" class="mr-2">
+                        {{ key }}={{ value }}</v-chip>
                 </template>
             </v-data-table>
         </v-col>

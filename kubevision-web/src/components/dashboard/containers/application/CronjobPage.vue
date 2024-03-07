@@ -16,13 +16,18 @@
                         </v-col>
                     </v-row>
                 </template>
+                <template v-slot:[`item.node_selector`]="{ item }">
+                    <v-chip size="x-small" class="mr-1 mb-1" v-for="(v, k) in item.node_selector || {}" v-bind:key="k">
+                        {{ k }}={{ v }}</v-chip>
+                </template>
                 <template v-slot:[`item.ip_families`]="{ item }">
                     <v-chip size="x-small" text-color="white" v-for="family in item.ip_families" v-bind:key="family">
                         {{ family }}
                     </v-chip>
                 </template>
                 <template v-slot:[`item.ports`]="{ item }">
-                    <v-chip size="x-small" color="indigo" text-color="white" v-for="port in item.ports" v-bind:key="port.port">
+                    <v-chip size="x-small" color="indigo" text-color="white" v-for="port in item.ports"
+                        v-bind:key="port.port">
                         {{ port.protocol }} {{ port.targetPort }}:{{ port.port }}
                     </v-chip>
                 </template>

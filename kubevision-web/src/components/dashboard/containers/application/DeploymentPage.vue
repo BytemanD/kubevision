@@ -16,13 +16,19 @@
                         </v-col>
                     </v-row>
                 </template>
+                <template v-slot:[`item.ready_replicas`]="{ item }">
+                    <v-chip size="small" :class="item.ready_replicas < item.replicas? 'text-red' : 'text-green'">
+                        {{ item.ready_replicas }}/{{ item.replicas }}
+                    </v-chip>
+                </template>
                 <template v-slot:[`item.ip_families`]="{ item }">
                     <v-chip size="x-small" text-color="white" v-for="family in item.ip_families" v-bind:key="family">
                         {{ family }}
                     </v-chip>
                 </template>
                 <template v-slot:[`item.ports`]="{ item }">
-                    <v-chip size="x-small" color="indigo" text-color="white" v-for="port in item.ports" v-bind:key="port.port">
+                    <v-chip size="x-small" color="indigo" text-color="white" v-for="port in item.ports"
+                        v-bind:key="port.port">
                         {{ port.protocol }} {{ port.targetPort }}:{{ port.port }}
                     </v-chip>
                 </template>

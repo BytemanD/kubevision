@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import notify from './notify.js';
 import { LOG, Utils, MESSAGE } from "./lib.js";
-import { RegExp } from 'core-js';
 
 async function waitDeletedByList(api, bodyKey, item) {
     let items = [];
@@ -34,6 +33,7 @@ class Restfulclient {
     constructor(baseUrl, async = false) {
         this.async = async;
         this.baseUrl = baseUrl;
+        this.registerNamespace = true;
     }
     getHeaders() {
         return null;
@@ -78,6 +78,9 @@ class Restfulclient {
                 reqUrl = this._get_url(url)
             }
         }
+        if (this.registerNamespace) {
+            reqUrl += `?namespace=${sessionStorage.getItem("namespace") || "default"}`
+        }
         let resp = await axios.get(reqUrl, { headers: this.getHeaders() });
         return resp.data
     }
@@ -119,6 +122,9 @@ class Restfulclient {
         return data
     }
     async list(filters = {}) {
+        if (this.registerNamespace && !filters.namespaces) {
+                filters.namespace = sessionStorage.getItem("namespace") || "default";
+        }
         let queryString = this._parseToQueryString(filters);
         let url = this._get_url()
         if (queryString) { url += `?${queryString}` }
@@ -168,10 +174,16 @@ class Cluster extends Restfulclient {
     constructor() { super('/cluster') }
 }
 class Namespaces extends Restfulclient {
-    constructor() { super('/namespaces') }
+    constructor() {
+        super('/namespaces')
+        this.registerNamespace = false;
+    }
 }
 class Nodes extends Restfulclient {
-    constructor() { super('/nodes') }
+    constructor() {
+        super('/nodes')
+        this.registerNamespace = false;
+    }
 }
 class Deployments extends Restfulclient {
     constructor() { super('/deployments') }
@@ -259,9 +271,6 @@ Restfulclient.prototype.getHeaders = function () {
     let headers = {
         'X-Auth-Token': localStorage.getItem('X-Auth-Token'),
     };
-    if (sessionStorage.getItem('namespace')) {
-        headers['X-Namespace'] = sessionStorage.getItem('namespace');
-    }
     return headers;
 }
 

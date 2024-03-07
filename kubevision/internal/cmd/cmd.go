@@ -23,9 +23,9 @@ func MiddlewareResponseStatus(r *ghttp.Request) {
 	r.Middleware.Next()
 	spentTime := time.Since(startTime).Seconds()
 	if r.Response.Status < 400 {
-		logging.Info("%s %s -> %d (%f)s", r.Method, r.URL, r.Response.Status, spentTime)
+		logging.Info("%s %s -> %d (%fs)", r.Method, r.URL, r.Response.Status, spentTime)
 	} else {
-		logging.Error("%s %s -> %d (%f)s\n%s", r.Method, r.URL, r.Response.Status, spentTime,
+		logging.Error("%s %s -> %d (%fs)\n%s", r.Method, r.URL, r.Response.Status, spentTime,
 			r.Response.BufferString())
 	}
 }

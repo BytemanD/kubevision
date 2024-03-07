@@ -6,6 +6,7 @@ import (
 	"kubevision/apiv1"
 	"kubevision/internal/model"
 	"kubevision/internal/service/k8s"
+	"kubevision/utility"
 
 	"github.com/gogf/gf/v2/frame/g"
 )
@@ -20,7 +21,7 @@ func (h *ConfigMaps) List(ctx context.Context, apiReq *apiv1.ConfigMapsListReq) 
 		req.Response.WriteStatusExit(400, err)
 	}
 
-	cms, err := client.ListConfigMaps(getReqNamespace(req))
+	cms, err := client.ListConfigMaps(utility.GetReqNamespace(req))
 	if err != nil {
 		req.Response.WriteStatusExit(400, err)
 	}
