@@ -4,15 +4,6 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
-// ready: str
-// labels: list
-// internal_ip: str
-// kernel_version: str
-// os_image: str
-// container_runtime_version: str
-// capacity: dict
-// allocatable: dict
-
 type Node struct {
 	BaseModel
 	Labels                  map[string]string `json:"labels,omitempty"`

@@ -21,9 +21,9 @@
                         <v-chip x-small v-else>{{ item.type }}</v-chip>
                     </template>
                     <template v-slot:[`item.message`]="{ item }">
-                        <v-tooltip top v-if="item.message.length > 0">
-                            <template v-slot:activator="{ on, attrs }">
-                                <span v-bind="attrs" v-on="on">{{ item.message.slice(0, 70) }} ...</span>
+                        <v-tooltip top v-if="item.message.length > 70">
+                            <template v-slot:activator="{ props }">
+                                <span class="text-info" v-bind="props">{{ item.message.slice(0, 70) }} ...</span>
                             </template>
                             {{ item.message }}
                         </v-tooltip>
