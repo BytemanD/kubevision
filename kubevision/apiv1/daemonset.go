@@ -14,3 +14,9 @@ type DaemonsetsPostReq struct {
 type DaemonsetsPostRes struct {
 	g.Meta `mime:"application/json"`
 }
+type DaemonsetsDelteReq struct {
+	g.Meta `path:"/daemonsets/:name" tags:"daemonsets" method:"delete"`
+}
+type DaemonsetsDeleteRes struct {
+	g.Meta `mime:"application/json"`
+}

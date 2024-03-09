@@ -193,6 +193,11 @@ class Daemonsets extends Restfulclient {
 }
 class Pods extends Restfulclient {
     constructor() { super('/pods') }
+
+    async describe(name){
+        let data = await this.get(`/pods/${name}/describe`)
+        return data
+    }
 }
 class Services extends Restfulclient {
     constructor() { super('/services') }

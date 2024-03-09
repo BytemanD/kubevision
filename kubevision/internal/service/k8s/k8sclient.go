@@ -4,8 +4,12 @@ import (
 	"context"
 	"kubevision/internal/model"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/BytemanD/easygo/pkg/global/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	// "k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -61,16 +65,37 @@ func (c K8sClient) ListNodes() ([]model.Node, error) {
 	return nodes, nil
 }
 func (c K8sClient) ListPods(namespace string) ([]model.Pod, error) {
-	posList, err := c.client.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{})
+	podList, err := c.client.CoreV1().Pods(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
 	pods := []model.Pod{}
-	for _, item := range posList.Items {
+	for _, item := range podList.Items {
 		pods = append(pods, model.ParseV1Pod(item))
 	}
 	return pods, nil
 }
+func (c K8sClient) GetPod(namespace string, name string) (*model.Pod, error) {
+	item, err := c.client.CoreV1().Pods(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	pod := model.ParseV1Pod(*item)
+	return &pod, nil
+}
+func (c K8sClient) DescribePod(namespace string, name string) ([]byte, error) {
+	item, err := c.client.CoreV1().Pods(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	item.ManagedFields = nil
+	return yaml.Marshal(item)
+}
+
+func (c K8sClient) DeletePod(namespace string, name string, options DeleteOptions) error {
+	return c.client.CoreV1().Pods(namespace).Delete(context.Background(), name, options.Options())
+}
+
 func (c K8sClient) ListDaemonsets(namespace string) ([]model.Daemonset, error) {
 	items, err := c.client.AppsV1().DaemonSets(namespace).List(context.Background(), metav1.ListOptions{})
 	if err != nil {

@@ -14,9 +14,22 @@ type PodsPostReq struct {
 type PodsPostRes struct {
 	g.Meta `mime:"application/json"`
 }
-type PodsDeleteReq struct {
-	g.Meta `path:"/pods" tags:"Pods" method:"delete"`
+
+type PodGetReq struct {
+	g.Meta `path:"/pods/:name" tags:"Pods" method:"get"`
 }
-type PodsDeleteRes struct {
+type PodGetRes struct {
 	g.Meta `mime:"application/json"`
+}
+type PodDeleteReq struct {
+	g.Meta `path:"/pods/:name" tags:"Pods" method:"delete"`
+}
+type PodDeleteRes struct {
+	g.Meta `mime:"application/json"`
+}
+type PodDescribeReq struct {
+	g.Meta `path:"/pods/:name/describe" tags:"Pods" method:"get"`
+}
+type PodDescribeRes struct {
+	g.Meta `mime:"application/text"`
 }

@@ -67,7 +67,7 @@ var (
 					new(controller.Namespaces),
 					new(controller.Daemonsets),
 					new(controller.Deployments),
-					new(controller.Pods),
+					new(controller.Pods), new(controller.Pod),
 					new(controller.Jobs),
 					new(controller.CronJobs),
 					new(controller.Services),

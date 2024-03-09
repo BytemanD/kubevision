@@ -26,7 +26,29 @@
                     <v-chip size="x-small" class="mr-1 mb-1" v-for="c in item.containers" v-bind:key="c.name">
                         {{ c.name }}</v-chip>
                 </template>
+                <template v-slot:[`item.actions`]="{ item }">
+                    <v-menu offset-y>
+                        <template v-slot:activator="{ props }">
+                            <v-btn color="purple" size="small" variant="text" v-bind="props" icon="mdi-dots-vertical">
 
+                            </v-btn>
+                        </template>
+                        <v-list density="compact">
+                            <!-- <v-list-item @click="showPod(item)">
+                                <v-list-item-title>查看</v-list-item-title>
+                            </v-list-item> -->
+                            <v-list-item @click="describeResource(item)">
+                                <v-list-item-title>描述</v-list-item-title>
+                            </v-list-item>
+                            <!-- <v-list-item @click="openPodLogsDialog(item)">
+                                <v-list-item-title>日志</v-list-item-title>
+                            </v-list-item> -->
+                            <!-- <v-list-item @click="openPodExecDialog(item)">
+                                <v-list-item-title>执行命令</v-list-item-title>
+                            </v-list-item> -->
+                        </v-list>
+                    </v-menu>
+                </template>
                 <template v-slot:expanded-row="{ columns, item }">
                     <td></td>
                     <td :colspan="columns.length - 2">
@@ -40,6 +62,8 @@
                     </td>
                 </template>
             </v-data-table>
+            <dialog-code :title="'Pod: ' + selected.name" :show="displayCode" :code="code"
+                @update:show="(i) => { displayCode = i }" />
         </v-col>
     </v-row>
 </template>
@@ -47,9 +71,25 @@
 <script setup>
 import { ref } from 'vue';
 
+import API from '@/assets/app/api'
 import { PodTable } from '@/assets/app/tables';
+import DialogCode from '@/components/plugins/DialogCode.vue';
 
 var table = ref(new PodTable())
+
+var selected = ref({})
+var code = ref('')
+var displayCode = ref(false)
+
 table.value.refresh()
+
+async function updateDescription(item) {
+}
+
+async function describeResource(item) {
+    selected.value = item;
+    displayCode.value = true;
+    code.value = await API.pods.describe(item.name)
+}
 
 </script>

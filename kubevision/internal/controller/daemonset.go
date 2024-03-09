@@ -9,7 +9,6 @@ import (
 	"kubevision/utility"
 
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 type Daemonsets struct{}
@@ -32,9 +31,10 @@ func (c *Daemonsets) Get(ctx context.Context, apiReq *apiv1.DaemonsetsListReq) (
 	return
 }
 
-func (c *Daemonsets) Post(req *ghttp.Request) {
+func (c *Daemonsets) Post(ctx context.Context, apiReq *apiv1.DaemonsetsPostReq) (res *apiv1.DaemonsetsPostRes, err error) {
+	return
 
 }
-func (c *Daemonsets) Delete(req *ghttp.Request) {
-
+func (c *Daemonsets) Delete(ctx context.Context, apiReq *apiv1.DaemonsetsDelteReq) (res *apiv1.DaemonsetsDeleteRes, err error) {
+	return
 }
