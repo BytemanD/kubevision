@@ -1,21 +1,25 @@
 package k8s
 
 import (
+	"bytes"
 	"context"
 	"kubevision/internal/model"
 
 	"gopkg.in/yaml.v3"
 
 	"github.com/BytemanD/easygo/pkg/global/logging"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	// "k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/clientcmd/api"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
 type K8sClient struct {
@@ -83,6 +87,10 @@ func (c K8sClient) GetPod(namespace string, name string) (*model.Pod, error) {
 	pod := model.ParseV1Pod(*item)
 	return &pod, nil
 }
+
+func (c K8sClient) DeletePod(namespace string, name string, options DeleteOptions) error {
+	return c.client.CoreV1().Pods(namespace).Delete(context.Background(), name, options.Options())
+}
 func (c K8sClient) DescribePod(namespace string, name string) ([]byte, error) {
 	item, err := c.client.CoreV1().Pods(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
@@ -91,9 +99,33 @@ func (c K8sClient) DescribePod(namespace string, name string) ([]byte, error) {
 	item.ManagedFields = nil
 	return yaml.Marshal(item)
 }
-
-func (c K8sClient) DeletePod(namespace string, name string, options DeleteOptions) error {
-	return c.client.CoreV1().Pods(namespace).Delete(context.Background(), name, options.Options())
+func (c K8sClient) ExecCommand(namespace string, podName, contaienrName string, command []string) (string, string, error) {
+	req := c.client.CoreV1().RESTClient().Post().
+		Resource("pods").Namespace(namespace).Name(podName).SubResource("exec").
+		VersionedParams(
+			&corev1.PodExecOptions{
+				Container: contaienrName,
+				Command:   command,
+				Stdout:    true,
+				Stderr:    true,
+			},
+			scheme.ParameterCodec,
+		)
+	exec, err := remotecommand.NewSPDYExecutor(&c.restConfig, "POST", req.URL())
+	if err != nil {
+		return "", "", err
+	}
+	var stdoutBuff bytes.Buffer
+	var stderrBuff bytes.Buffer
+	err = exec.StreamWithContext(context.Background(), remotecommand.StreamOptions{
+		Stdout: &stdoutBuff, Stderr: &stderrBuff,
+	})
+	logging.Debug("stdout: %s", stdoutBuff.String())
+	logging.Debug("stderr: %s", stderrBuff.String())
+	if err != nil {
+		return "", "", err
+	}
+	return stdoutBuff.String(), stderrBuff.String(), nil
 }
 
 func (c K8sClient) ListDaemonsets(namespace string) ([]model.Daemonset, error) {

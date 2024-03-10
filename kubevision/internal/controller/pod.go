@@ -7,6 +7,7 @@ import (
 	"kubevision/internal/model"
 	"kubevision/internal/service/k8s"
 	"kubevision/utility"
+	"strings"
 
 	"github.com/BytemanD/easygo/pkg/global/logging"
 	"github.com/gogf/gf/v2/frame/g"
@@ -35,6 +36,25 @@ func (c *Pods) Get(ctx context.Context, apiReq *apiv1.PodsListReq) (res *apiv1.P
 	req.Response.WriteJson(data)
 	return
 }
+
+func (c *Pod) Delete(ctx context.Context, apiReq *apiv1.PodDeleteReq) (res *apiv1.PodDeleteRes, err error) {
+	req := g.RequestFromCtx(ctx)
+
+	namespace := utility.GetReqNamespace(req)
+	client, err := k8s.GetClient()
+	if err != nil {
+		logging.Error("%v", err)
+		req.Response.WriteStatusExit(400)
+	}
+	err = client.DeletePod(namespace, req.Get("name").String(), k8s.NewDeleteOption())
+	if err != nil {
+		logging.Error("%v", err)
+		req.Response.WriteStatusExit(400)
+	}
+	req.Response.WriteStatusExit(204)
+	return
+}
+
 func (c *Pod) Describe(ctx context.Context, apiReq *apiv1.PodDescribeReq) (res *apiv1.PodDescribeRes, err error) {
 	req := g.RequestFromCtx(ctx)
 
@@ -52,21 +72,30 @@ func (c *Pod) Describe(ctx context.Context, apiReq *apiv1.PodDescribeReq) (res *
 	req.Response.WriteStatusExit(200, data)
 	return
 }
-
-func (c *Pod) Delete(ctx context.Context, apiReq *apiv1.PodDeleteReq) (res *apiv1.PodDeleteRes, err error) {
+func (c *Pod) Execute(ctx context.Context, apiReq *apiv1.PodExecReq) (res *apiv1.PodExecRes, err error) {
 	req := g.RequestFromCtx(ctx)
 
 	namespace := utility.GetReqNamespace(req)
+	data := req.GetBody()
+
+	type Params struct {
+		Container string `json:"container"`
+		Command   string `json:"command"`
+	}
+	body := map[string]Params{"exec": {}}
+	json.Unmarshal(data, &body)
 	client, err := k8s.GetClient()
 	if err != nil {
 		logging.Error("%v", err)
 		req.Response.WriteStatusExit(400)
 	}
-	err = client.DeletePod(namespace, req.Get("name").String(), k8s.NewDeleteOption())
+	stdout, stderr, err := client.ExecCommand(
+		namespace, req.Get("name").String(),
+		body["exec"].Container, strings.Fields(body["exec"].Command))
 	if err != nil {
-		logging.Error("%v", err)
-		req.Response.WriteStatusExit(400)
+		req.Response.WriteStatusExit(400, err)
 	}
-	req.Response.WriteStatusExit(204)
+	respBody := map[string]string{"stdout": stdout, "stderr": stderr}
+	req.Response.WriteStatusExit(200, respBody)
 	return
 }

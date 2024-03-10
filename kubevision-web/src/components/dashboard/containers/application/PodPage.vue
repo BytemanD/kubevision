@@ -43,9 +43,9 @@
                             <!-- <v-list-item @click="openPodLogsDialog(item)">
                                 <v-list-item-title>日志</v-list-item-title>
                             </v-list-item> -->
-                            <!-- <v-list-item @click="openPodExecDialog(item)">
+                            <v-list-item @click="openDialogPodExecute(item)">
                                 <v-list-item-title>执行命令</v-list-item-title>
-                            </v-list-item> -->
+                            </v-list-item>
                         </v-list>
                     </v-menu>
                 </template>
@@ -64,6 +64,7 @@
             </v-data-table>
             <dialog-code :title="'Pod: ' + selected.name" :show="displayCode" :code="code"
                 @update:show="(i) => { displayCode = i }" />
+            <dialog-pod-execute :pod="selected" :show="displayPodExecute" @update:show="(i) => { displayPodExecute = i }" />
         </v-col>
     </v-row>
 </template>
@@ -74,16 +75,20 @@ import { ref } from 'vue';
 import API from '@/assets/app/api'
 import { PodTable } from '@/assets/app/tables';
 import DialogCode from '@/components/plugins/DialogCode.vue';
+import DialogPodExecute from '@/components/plugins/DialogPodExecute.vue';
 
 var table = ref(new PodTable())
 
 var selected = ref({})
 var code = ref('')
 var displayCode = ref(false)
+var displayPodExecute = ref(false)
 
 table.value.refresh()
 
-async function updateDescription(item) {
+async function openDialogPodExecute(item) {
+    selected.value = item;
+    displayPodExecute.value = true;
 }
 
 async function describeResource(item) {

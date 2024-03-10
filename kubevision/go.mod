@@ -11,6 +11,11 @@ require (
 )
 
 require (
+	github.com/moby/spdystream v0.2.0 // indirect
+	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
+)
+
+require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/BytemanD/easygo/pkg v0.0.5
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect

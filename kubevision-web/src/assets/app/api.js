@@ -104,8 +104,8 @@ class Restfulclient {
                 reqUrl, body, { headers: this.getHeaders() });
             return resp
         } catch (e) {
-            console.error(this._getErrorMsg(e.response));
-            throw Error(this._getErrorMsg(e.response))
+            console.error(e);
+            throw Error(e)
         }
     }
     async post(body, url = null) {
@@ -123,7 +123,7 @@ class Restfulclient {
     }
     async list(filters = {}) {
         if (this.registerNamespace && !filters.namespaces) {
-                filters.namespace = sessionStorage.getItem("namespace") || "default";
+            filters.namespace = sessionStorage.getItem("namespace") || "default";
         }
         let queryString = this._parseToQueryString(filters);
         let url = this._get_url()
@@ -194,9 +194,16 @@ class Daemonsets extends Restfulclient {
 class Pods extends Restfulclient {
     constructor() { super('/pods') }
 
-    async describe(name){
+    async describe(name) {
         let data = await this.get(`/pods/${name}/describe`)
         return data
+    }
+    async execute(podName, containerName, command) {
+        let data = {
+            container: containerName,
+            command: command
+        }
+        return await this.post({exec: data}, `${podName}/exec`)
     }
 }
 class Services extends Restfulclient {

@@ -15,17 +15,19 @@ type Service struct {
 }
 
 func ParseV1Service(item corev1.Service) Service {
-
-	return Service{
+	service := Service{
 		BaseModel: BaseModel{
 			Name:     item.Name,
 			Creation: item.CreationTimestamp.Format("2006-01-02 15:04:05"),
 		},
-		Type:                  string(item.Spec.Type),
-		ClusterIp:             item.Spec.ClusterIP,
-		ClusterIPs:            item.Spec.ClusterIPs,
-		InternalTrafficPolicy: string(*item.Spec.InternalTrafficPolicy),
-		IpFamilies:            item.Spec.IPFamilies,
-		Ports:                 item.Spec.Ports,
+		Type:       string(item.Spec.Type),
+		ClusterIp:  item.Spec.ClusterIP,
+		ClusterIPs: item.Spec.ClusterIPs,
+		IpFamilies: item.Spec.IPFamilies,
+		Ports:      item.Spec.Ports,
 	}
+	if item.Spec.InternalTrafficPolicy != nil {
+		service.InternalTrafficPolicy = string(*item.Spec.InternalTrafficPolicy)
+	}
+	return service
 }
