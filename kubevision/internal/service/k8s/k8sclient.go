@@ -3,6 +3,7 @@ package k8s
 import (
 	"bytes"
 	"context"
+	"io"
 	"kubevision/internal/model"
 
 	"gopkg.in/yaml.v3"
@@ -115,8 +116,10 @@ func (c K8sClient) ExecCommand(namespace string, podName, contaienrName string, 
 	if err != nil {
 		return "", "", err
 	}
-	var stdoutBuff bytes.Buffer
-	var stderrBuff bytes.Buffer
+	var (
+		stdoutBuff bytes.Buffer
+		stderrBuff bytes.Buffer
+	)
 	err = exec.StreamWithContext(context.Background(), remotecommand.StreamOptions{
 		Stdout: &stdoutBuff, Stderr: &stderrBuff,
 	})
@@ -126,6 +129,30 @@ func (c K8sClient) ExecCommand(namespace string, podName, contaienrName string, 
 		return "", "", err
 	}
 	return stdoutBuff.String(), stderrBuff.String(), nil
+}
+
+func (c K8sClient) doStream(req *rest.Request) (*bytes.Buffer, error) {
+	reader, err := req.Stream(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+	buff := new(bytes.Buffer)
+	if _, err := io.Copy(buff, reader); err != nil {
+		return nil, err
+	}
+	return buff, nil
+}
+func (c K8sClient) GetLogs(namespace string, podName, contaienrName string, tailLines *int64) (string, error) {
+	logging.Info("get logs for container:%v lines:%v", contaienrName, tailLines)
+	req := c.client.CoreV1().Pods(namespace).GetLogs(podName, &corev1.PodLogOptions{
+		Container: contaienrName, TailLines: tailLines,
+	})
+	logs, err := c.doStream(req)
+	if err != nil {
+		return "", err
+	}
+	return logs.String(), nil
 }
 
 func (c K8sClient) ListDaemonsets(namespace string) ([]model.Daemonset, error) {

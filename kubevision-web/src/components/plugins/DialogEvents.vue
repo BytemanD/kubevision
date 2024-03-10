@@ -6,7 +6,7 @@
         </template>
         <v-card title="事件">
             <template v-slot:append>
-                <v-btn variant="tonal" color="red" size="small" @click="table.refresh()" icon="mdi-refresh">
+                <v-btn variant="tonal" color="info" size="small" @click="table.refresh()" icon="mdi-refresh">
                 </v-btn>
             </template>
             <v-card-text>

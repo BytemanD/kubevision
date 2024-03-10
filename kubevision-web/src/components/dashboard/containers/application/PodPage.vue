@@ -40,10 +40,10 @@
                             <v-list-item @click="describeResource(item)">
                                 <v-list-item-title>描述</v-list-item-title>
                             </v-list-item>
-                            <!-- <v-list-item @click="openPodLogsDialog(item)">
+                            <v-list-item @click="openDialogPodLogs(item)" :disabled="item.status != 'Running'">
                                 <v-list-item-title>日志</v-list-item-title>
-                            </v-list-item> -->
-                            <v-list-item @click="openDialogPodExecute(item)">
+                            </v-list-item>
+                            <v-list-item @click="openDialogPodExecute(item)" :disabled="item.status != 'Running'">
                                 <v-list-item-title>执行命令</v-list-item-title>
                             </v-list-item>
                         </v-list>
@@ -64,7 +64,9 @@
             </v-data-table>
             <dialog-code :title="'Pod: ' + selected.name" :show="displayCode" :code="code"
                 @update:show="(i) => { displayCode = i }" />
-            <dialog-pod-execute :pod="selected" :show="displayPodExecute" @update:show="(i) => { displayPodExecute = i }" />
+            <dialog-pod-execute :pod="selected" :show="displayPodExecute"
+                @update:show="(i) => { displayPodExecute = i }" />
+            <dialog-pod-logs :pod="selected" :show="displayPodLogs" @update:show="(i) => { displayPodLogs = i }" />
         </v-col>
     </v-row>
 </template>
@@ -76,6 +78,7 @@ import API from '@/assets/app/api'
 import { PodTable } from '@/assets/app/tables';
 import DialogCode from '@/components/plugins/DialogCode.vue';
 import DialogPodExecute from '@/components/plugins/DialogPodExecute.vue';
+import DialogPodLogs from '@/components/plugins/DialogPodLogs.vue';
 
 var table = ref(new PodTable())
 
@@ -83,12 +86,17 @@ var selected = ref({})
 var code = ref('')
 var displayCode = ref(false)
 var displayPodExecute = ref(false)
+var displayPodLogs = ref(false)
 
 table.value.refresh()
 
 async function openDialogPodExecute(item) {
     selected.value = item;
     displayPodExecute.value = true;
+}
+async function openDialogPodLogs(item) {
+    selected.value = item;
+    displayPodLogs.value = true;
 }
 
 async function describeResource(item) {

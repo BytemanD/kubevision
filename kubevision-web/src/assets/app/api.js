@@ -78,9 +78,7 @@ class Restfulclient {
                 reqUrl = this._get_url(url)
             }
         }
-        if (this.registerNamespace) {
-            reqUrl += `?namespace=${sessionStorage.getItem("namespace") || "default"}`
-        }
+        reqUrl = this.addNamespace(reqUrl)
         let resp = await axios.get(reqUrl, { headers: this.getHeaders() });
         return resp.data
     }
@@ -90,16 +88,28 @@ class Restfulclient {
             { headers: this.getHeaders() });
         return resp.data
     }
-    async doPost(body, url = null) {
-        try {
-            let reqUrl = this.baseUrl;
-            if (url) {
-                if (url.startsWith('/')) {
-                    reqUrl = url;
-                } else {
-                    reqUrl = this._get_url(url);
-                }
+    addNamespace(reqUrl) {
+        if (this.registerNamespace) {
+            let namespace = sessionStorage.getItem("namespace") || "default";
+            if (reqUrl.indexOf("?") > 0) {
+                reqUrl += `&namespace=${namespace}`
+            } else {
+                reqUrl += `?namespace=${namespace}`
             }
+        }
+        return reqUrl
+    }
+    async doPost(body, url = null) {
+        let reqUrl = this.baseUrl;
+        if (url) {
+            if (url.startsWith('/')) {
+                reqUrl = url;
+            } else {
+                reqUrl = this._get_url(url);
+            }
+        }
+        reqUrl = this.addNamespace(reqUrl)
+        try {
             let resp = await axios.post(
                 reqUrl, body, { headers: this.getHeaders() });
             return resp
@@ -204,6 +214,13 @@ class Pods extends Restfulclient {
             command: command
         }
         return await this.post({exec: data}, `${podName}/exec`)
+    }
+    async logs(podName, containerName, lines) {
+        let query = this._parseToQueryString({
+            container: containerName,
+            lines: lines || 50}
+        )
+        return await this.get(`/pods/${podName}/logs?${query}`)
     }
 }
 class Services extends Restfulclient {

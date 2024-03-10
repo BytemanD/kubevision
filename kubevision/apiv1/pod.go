@@ -39,3 +39,9 @@ type PodExecReq struct {
 type PodExecRes struct {
 	g.Meta `mime:"application/text"`
 }
+type PodLogsReq struct {
+	g.Meta `path:"/pods/:name/logs" tags:"Pods" method:"get"`
+}
+type PodLogsRes struct {
+	g.Meta `mime:"application/text"`
+}

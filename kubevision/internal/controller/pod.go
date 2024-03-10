@@ -76,14 +76,17 @@ func (c *Pod) Execute(ctx context.Context, apiReq *apiv1.PodExecReq) (res *apiv1
 	req := g.RequestFromCtx(ctx)
 
 	namespace := utility.GetReqNamespace(req)
-	data := req.GetBody()
 
 	type Params struct {
 		Container string `json:"container"`
 		Command   string `json:"command"`
 	}
 	body := map[string]Params{"exec": {}}
-	json.Unmarshal(data, &body)
+	err = utility.GetReqBody(req, &body)
+	if err != nil {
+		req.Response.WriteStatusExit(400, "read request body failed")
+	}
+
 	client, err := k8s.GetClient()
 	if err != nil {
 		logging.Error("%v", err)
@@ -96,6 +99,35 @@ func (c *Pod) Execute(ctx context.Context, apiReq *apiv1.PodExecReq) (res *apiv1
 		req.Response.WriteStatusExit(400, err)
 	}
 	respBody := map[string]string{"stdout": stdout, "stderr": stderr}
+	req.Response.WriteStatusExit(200, respBody)
+	return
+}
+
+func (c *Pod) GetLogs(ctx context.Context, apiReq *apiv1.PodLogsReq) (res *apiv1.PodLogsRes, err error) {
+	req := g.RequestFromCtx(ctx)
+
+	namespace := utility.GetReqNamespace(req)
+	container := utility.GetReqParamString(req, "container")
+	lines := utility.GetReqParamInt64(req, "lines")
+
+	client, err := k8s.GetClient()
+	if err != nil {
+		logging.Error("%v", err)
+		req.Response.WriteStatusExit(400)
+	}
+	var containerName string
+	if container != nil {
+		containerName = *container
+	}
+
+	logs, err := client.GetLogs(
+		namespace, req.Get("name").String(),
+		containerName, lines,
+	)
+	if err != nil {
+		req.Response.WriteStatusExit(400, err)
+	}
+	respBody := map[string]string{"logs": logs}
 	req.Response.WriteStatusExit(200, respBody)
 	return
 }

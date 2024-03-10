@@ -9,22 +9,21 @@
                             <template v-slot:prepend>容器</template>
                         </v-select>
                     </v-col>
-                    <v-col>
-                        <v-text-field hide-details density="compact" placeholder="请输入命令" v-model="data.command">
-                            <template v-slot:prepend>命令</template>
+                    <v-col cols="2">
+                        <v-text-field hide-details density="compact" placeholder="请输入行数" v-model="data.lines"
+                            type="number">
+                            <template v-slot:prepend>行数</template>
                         </v-text-field>
                     </v-col>
                     <v-col cols="2" class="text-center my-auto">
-                        <v-btn color="warning" :disabled="!data.command || data.command.length == 0" @click="execute()"
-                            :loading="loading">执行</v-btn>
+                        <v-btn color="warning" @click="execute()" :loading="loading">查询</v-btn>
                     </v-col>
                 </v-row>
             </v-card-title>
-            <v-card-text class="pt-4" style="min-height: 600px;">
+            <v-card-text class="pt-4">
                 <v-alert density="compact" color="red" v-if="data.error">
                     <template v-slot:prepend><v-icon>mdi-alert-circle</v-icon></template>
                     {{ data.error }}
-
                 </v-alert>
                 <pre style="min-height: 500px; font-size: small;" class="bg-black" v-else>{{ data.content }} </pre>
             </v-card-text>
@@ -44,7 +43,9 @@ const props = defineProps({
 const emits = defineEmits(['update:show'])
 
 var data = ref({
-    container: null, command: 'ls -l', content: '',
+    container: null,
+    lines: 10,
+    content: '',
     error: ''
 })
 
@@ -66,10 +67,10 @@ async function execute() {
     try {
         data.value.content = ''
         data.value.error = ''
-        let result = await API.pods.execute(props.pod.name, data.value.container, data.value.command)
-        data.value.content = result.stdout || result.stderr
+        let result = await API.pods.logs(props.pod.name, data.value.container, parseInt(data.value.lines || 0))
+        data.value.content = result.logs
     } catch (e) {
-        console.error('execute failed: ', e)
+        console.error('查询失败: ', e)
         data.value.error = e
     } finally {
         loading.value = false
@@ -80,6 +81,7 @@ onUpdated(() => {
         if (props.pod.containers.length > 0) {
             data.value.container = props.pod.containers[0].name
         }
+        data.value.content = ''
     }
 })
 
