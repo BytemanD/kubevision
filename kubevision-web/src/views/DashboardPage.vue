@@ -187,7 +187,7 @@ export default {
       self.$vuetify.theme.dark = SETTINGS.ui.getItem('themeDark').value;
       self.refresh();
     }).catch((e) => {
-      notify.error('请重新登录')
+      console.error(e)
       self.$router.push('/login')
     })
   },

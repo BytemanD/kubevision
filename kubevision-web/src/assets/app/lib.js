@@ -151,7 +151,7 @@ export class Utils {
         return !value || value == '' || value == {} || value == [];
     }
     static getNavigationSelectedItem(){
-        let localItem = localStorage.getItem('navigationSelectedItem');
+        let localItem = localStorage.getItem('kubevisionNavigationSelectedItem');
         return localItem ? JSON.parse(localItem): null;
     }
     static setNavigationSelectedItem(item){
@@ -159,7 +159,7 @@ export class Utils {
             console.warn('item is null when navigationSelectedItem')
             return
         }
-        localStorage.setItem('navigationSelectedItem', JSON.stringify(item));
+        localStorage.setItem('kubevisionNavigationSelectedItem', JSON.stringify(item));
     }
 }
 

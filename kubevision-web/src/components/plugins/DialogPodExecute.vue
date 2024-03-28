@@ -20,7 +20,7 @@
                     </v-col>
                 </v-row>
             </v-card-title>
-            <v-card-text class="pt-4" style="min-height: 600px;">
+            <v-card-text class="pt-4" style="min-height: 500px;">
                 <v-alert density="compact" color="red" v-if="data.error">
                     <template v-slot:prepend><v-icon>mdi-alert-circle</v-icon></template>
                     {{ data.error }}

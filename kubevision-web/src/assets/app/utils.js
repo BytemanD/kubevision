@@ -142,11 +142,11 @@ export class Utils {
         }
     }
     static getNavigationSelectedItem(){
-        let localItem = localStorage.getItem('navigationSelectedItem');
+        let localItem = localStorage.getItem('kubevisionNavigationSelectedItem');
         return localItem ? JSON.parse(localItem): null;
     }
     static setNavigationSelectedItem(item){
-        localStorage.setItem('navigationSelectedItem', JSON.stringify(item));
+        localStorage.setItem('kubevisionNavigationSelectedItem', JSON.stringify(item));
     }
 
 }

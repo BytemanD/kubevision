@@ -63,11 +63,14 @@ async function refreshRegions(force = false) {
 
 async function login() {
   try {
+    console.log('11111111111111')
     let resp = await API.system.login(auth.value.username, auth.value.password)
     notify.success('登录成功')
+    console.log(resp.headers.get('X-Auth-Token'))
     localStorage.setItem('X-Auth-Token', resp.headers.get('X-Auth-Token'));
     proxy.$router.push('/dashboard')
   } catch (e) {
+    console.log('222222222222')
     console.error(e)
     notify.error('登录失败')
   }

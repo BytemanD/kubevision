@@ -83,9 +83,9 @@ class Restfulclient {
         return resp.data
     }
     async delete(id) {
-        let resp = await axios.delete(
-            this._get_url(id),
-            { headers: this.getHeaders() });
+        let reqUrl = this._get_url(id);
+        reqUrl = this.addNamespace(reqUrl)
+        let resp = await axios.delete(reqUrl, { headers: this.getHeaders() });
         return resp.data
     }
     addNamespace(reqUrl) {

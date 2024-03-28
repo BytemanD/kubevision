@@ -54,7 +54,22 @@ func (c *Pod) Delete(ctx context.Context, apiReq *apiv1.PodDeleteReq) (res *apiv
 	req.Response.WriteStatusExit(204)
 	return
 }
+func (c *Pod) Get(ctx context.Context, apiReq *apiv1.PodGetReq) (res *apiv1.PodGetRes, err error) {
+	req := g.RequestFromCtx(ctx)
 
+	namespace := utility.GetReqNamespace(req)
+	client, err := k8s.GetClient()
+	if err != nil {
+		logging.Error("%v", err)
+		req.Response.WriteStatusExit(400, err)
+	}
+	pod, err := client.GetPod(namespace, req.Get("name").String())
+	if err != nil {
+		req.Response.WriteStatusExit(400, utility.JsonErrorResponse(err.Error()))
+	}
+	req.Response.WriteJson(utility.JsonResponse("pod", *pod))
+	return
+}
 func (c *Pod) Describe(ctx context.Context, apiReq *apiv1.PodDescribeReq) (res *apiv1.PodDescribeRes, err error) {
 	req := g.RequestFromCtx(ctx)
 
@@ -62,12 +77,11 @@ func (c *Pod) Describe(ctx context.Context, apiReq *apiv1.PodDescribeReq) (res *
 	client, err := k8s.GetClient()
 	if err != nil {
 		logging.Error("%v", err)
-		req.Response.WriteStatusExit(400)
+		req.Response.WriteStatusExit(400, err)
 	}
 	data, err := client.DescribePod(namespace, req.Get("name").String())
 	if err != nil {
-		logging.Error("describe pod failed: %v", err)
-		req.Response.WriteStatusExit(400)
+		req.Response.WriteStatusExit(400, utility.JsonErrorResponse(err.Error()))
 	}
 	req.Response.WriteStatusExit(200, data)
 	return

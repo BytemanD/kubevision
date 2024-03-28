@@ -23,6 +23,7 @@ type Container struct {
 	ImagePullPolicy string             `json:"image_pull_policy,omitempty"`
 	Ports           []v1.ContainerPort `json:"ports,omitempty"`
 	Status          ContainerStatus    `json:"status,omitempty"`
+	Image           string             `json:"image,omitempty"`
 }
 
 func ParseV1ContainerStatus(item v1.ContainerStatus) ContainerStatus {
@@ -40,6 +41,7 @@ func ParseV1Container(item v1.Container, containerStatus *v1.ContainerStatus) Co
 		Command:         item.Command,
 		ImagePullPolicy: string(item.ImagePullPolicy),
 		Ports:           item.Ports,
+		Image:           item.Image,
 	}
 	return container
 }

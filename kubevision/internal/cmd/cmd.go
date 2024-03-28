@@ -11,6 +11,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
+	"github.com/gogf/gf/v2/os/glog"
 )
 
 func MiddlewareCORS(req *ghttp.Request) {
@@ -79,13 +80,21 @@ var (
 				)
 			})
 			port := parser.GetOpt("port", "8091").String()
+			debug := parser.ContainsOpt("debug")
+
 			if port != "" {
 				s.SetAddr(fmt.Sprintf(":%s", port))
 			}
+			level := logging.INFO
+
+			if debug {
+				level = logging.DEBUG
+			}
+
 			// s.BindObjectMethod("/namespaces", new(controller.Namespace), "Index")
 
-			logging.BasicConfig(logging.LogConfig{Level: logging.DEBUG})
-			logging.Info("start")
+			logging.BasicConfig(logging.LogConfig{Level: level})
+			glog.Info(context.TODO(), "start server")
 			s.Run()
 			return nil
 		},
@@ -93,7 +102,9 @@ var (
 )
 
 func init() {
-	Main.Arguments = append(Main.Arguments, gcmd.Argument{
-		Name: "port", Short: "p", Brief: "The port of server",
-	})
+	Main.Arguments = append(
+		Main.Arguments,
+		gcmd.Argument{Name: "port", Short: "p", Brief: "The port of server"},
+		gcmd.Argument{Name: "debug", Short: "d", Orphan: true, Brief: "Show DEBUG message"},
+	)
 }
